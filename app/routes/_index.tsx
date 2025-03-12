@@ -35,7 +35,7 @@ export default function TeamList() {
         {filteredTeams.map((team: any) => (
           <li key={team.id} className="p-4 hover:bg-gray-50">
             <Link
-              to={`/${team.id}`}
+              to={`/${encodeURIComponent(team.team.name)}`}
               className="text-lg font-medium text-blue-600 hover:underline"
             >
               {team.team.name}

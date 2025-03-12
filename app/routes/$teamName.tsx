@@ -17,8 +17,8 @@ const getNickName = (player: any): string | undefined => {
 
 export default function TeamDetail() {
   const { data } = useLoaderData<typeof loader>();
-  const { teamId } = useParams();
-  const team = data.find((team: any) => team.id === teamId);
+  const { teamName } = useParams();
+  const team = data.find((team: any) => encodeURIComponent(team.team.name) === encodeURIComponent(teamName));
 
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
 

@@ -5,18 +5,37 @@ import { promises as fs } from "fs";
 
 export const loader: LoaderFunction = async () => {
   const tournamentId = "eb388939-ab0a-47f1-aedb-12f2ceb3738b";
-  // Use the OS temporary folder instead of process.cwd()
   const cacheDir = path.join(os.tmpdir(), "cache");
-  const filePath = path.join(cacheDir, `${tournamentId}.json`);
+
+  // Create a date string in YYYY-MM-DD format for today's date.
+  const todayDate = new Date().toISOString().split("T")[0];
+  const fileName = `${tournamentId}-${todayDate}.json`;
+  const filePath = path.join(cacheDir, fileName);
 
   console.log("Loader called for tournament:", tournamentId);
 
+  // Remove any old cache files for this tournament that don't match today's date
   try {
+    const files = await fs.readdir(cacheDir);
+    const tournamentFiles = files.filter(
+      (file) => file.startsWith(tournamentId) && file !== fileName
+    );
+    for (const oldFile of tournamentFiles) {
+      await fs.unlink(path.join(cacheDir, oldFile));
+      console.log("Removed old cache file:", oldFile);
+    }
+  } catch (err) {
+    // The cache directory may not exist yet. This is fine.
+    console.log("Cache directory not found or error reading it:", err);
+  }
+
+  try {
+    // If today's cache file exists, use it.
     await fs.access(filePath);
     const fileContents = await fs.readFile(filePath, "utf8");
     return json({ data: JSON.parse(fileContents) });
   } catch (error) {
-    console.log("Cache file not found or error reading it. Fetching from API...", error);
+    console.log("Today's cache file not found. Fetching from API...", error);
     const response = await fetch(
       `https://app.bedriftsligaen.no/api/Tournament/cached/${tournamentId}/teams`
     );
@@ -26,6 +45,6 @@ export const loader: LoaderFunction = async () => {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf8");
     console.log("Cached data written to:", filePath);
 
-    return json({ data: data });
+    return json({ data });
   }
 };
