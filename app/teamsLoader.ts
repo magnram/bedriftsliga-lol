@@ -11,12 +11,29 @@ export const loader: LoaderFunction = async () => {
 
   console.log("Loader called for tournament:", tournamentId);
 
+  const now = new Date();
+  // Create a Date object for today at 18:00 (6:00 PM)
+  const sixPmToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 0, 0);
+
+  let useCache = false;
+
   try {
     await fs.access(filePath);
+    const stats = await fs.stat(filePath);
+
+    // If it's before 18:00, or the cached file was updated after 18:00 today, it's valid
+    if (now < sixPmToday || stats.mtime >= sixPmToday) {
+      useCache = true;
+    }
+  } catch (error) {
+    // Cache file doesn't exist or cannot be accessed.
+  }
+
+  if (useCache) {
     const fileContents = await fs.readFile(filePath, "utf8");
     return json({ data: JSON.parse(fileContents) });
-  } catch (error) {
-    console.log("Cache file not found or error reading it. Fetching from API...", error);
+  } else {
+    console.log("Cache invalid or not found. Fetching from API...", error);
     const response = await fetch(
       `https://app.bedriftsligaen.no/api/Tournament/cached/${tournamentId}/teams`
     );
