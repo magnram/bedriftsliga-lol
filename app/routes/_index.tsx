@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLoaderData } from "@remix-run/react";
+import {Link, useLoaderData} from "@remix-run/react";
 import { loader as teamsLoader } from "../teamsLoader";
 
 export const loader = teamsLoader;
@@ -34,12 +34,12 @@ export default function TeamList() {
       <ul className="bg-white shadow-md rounded-lg divide-y divide-gray-200">
         {filteredTeams.map((team: any) => (
           <li key={team.id} className="p-4 hover:bg-gray-50">
-            <a
-              href={`/teams/${team.id}`}
+            <Link
+              to={`/${team.id}`}
               className="text-lg font-medium text-blue-600 hover:underline"
             >
               {team.team.name}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

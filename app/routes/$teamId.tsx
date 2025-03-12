@@ -56,7 +56,7 @@ export default function TeamDetail() {
     <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
       {/* Back button */}
       <div className="mb-4">
-        <Link to="/teams" className="text-blue-500 hover:underline">
+        <Link to="/" className="text-blue-500 hover:underline">
           &larr; Back
         </Link>
       </div>
