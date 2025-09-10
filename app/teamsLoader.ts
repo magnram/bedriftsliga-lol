@@ -5,6 +5,8 @@ import { promises as fs } from "fs";
 
 export const loader: LoaderFunction = async () => {
   const tournamentId = "eb388939-ab0a-47f1-aedb-12f2ceb3738b";
+  const competitionId = "cc865220-10a7-4ee3-9fce-330d32177cea";
+
   const cacheDir = path.join(os.tmpdir(), "cache");
 
   // Create a date string in YYYY-MM-DD format for today's date.
